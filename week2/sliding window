@@ -1,0 +1,25 @@
+https://chatgpt.com/s/t_68c7bdf88bf48191a5a29b81c55490b7
+
+https://github.com/MyungKyuYi/AI-class/blob/main/WISDM_1D_CNN_2mode_proposed(SS)_211019.ipynb
+
+def get_frames(df, frame_size, hop_size):
+
+    N_FEATURES = 3
+
+    frames = []
+    labels = []
+    for i in range(0, len(df) - frame_size, hop_size):
+        x = df['x'].values[i: i + frame_size]
+        y = df['y'].values[i: i + frame_size]
+        z = df['z'].values[i: i + frame_size]
+        
+        # Retrieve the most often used label in this segment
+        label = stats.mode(df['label'][i: i + frame_size])[0][0]
+        frames.append([x, y, z])
+        labels.append(label)
+
+    # Bring the segments into a better shape
+    frames = np.asarray(frames).reshape(-1, frame_size, N_FEATURES)
+    labels = np.asarray(labels)
+
+    return frames, labels
