@@ -1,0 +1,37 @@
+센서로 들어오는 모든 데이터를 분류할 수 있음
+세그멘테이션 : 들어온 데이터를 고정된 크기로 자를 수 있음. (fixed size 혹은 variable size)
+
+window : 잘라진 데이터 그 자체(그룹핑)
+오버래핑 : 각각의 window를 겹치게 하는 작업. 겹친 정도를 정할 수 있음(50%, 25%). 문제에 마다 모두 다름.
+
+기본적으로 모델을 만들 때는 subject wise로 만들어야한다
+subject wise : 사람별로 구분해서 트레인과 테스트 데이터를 나눈다.
+
+1. 데이터 분할 (Data split)
+일반적으로는 train/test를 무작위로 나눠.
+그런데 “subject-wise split”은 한 사람이 가진 모든 데이터를 통째로 학습 세트나 테스트 세트에만 넣는 방식이야.
+이렇게 하면 같은 사람의 데이터가 학습/테스트에 동시에 섞이지 않아서 모델이 특정 사람의 특성을 외워서 잘 맞추는 “치팅”을 막을 수 있어.
+  
+2. 평가 방식 (Evaluation)
+예를 들어 행동 인식이나 생체 신호 인식(HAR, EEG, ECG 등)에서 “subject-wise accuracy”라고 하면, 각 사람 별로 모델 성능을 구해서 평균 내는 방식을 뜻해.
+이렇게 하면 특정 소수 사용자에게만 성능이 높게 나오는 편향을 줄일 수 있어.
+  
+3. 대조: sample-wise / record-wise
+sample-wise: 데이터를 그냥 샘플 단위로 랜덤 섞어서 train/test 분리. (subject가 섞일 수 있음)
+subject-wise: 개인 단위로 끊어서 train/test 분리. (일종의 leave-one-subject-out cross-validation도 여기에 속해)
+  
+cross valudation(교차 검증)을 해야함
+ - 데이터를 여러 번 나누어서 학습/검증을 반복하는 평가 방법이야.
+한 번만 train/test로 나누면 결과가 우연(데이터 분할 방식)에 따라 달라질 수 있는데, cross-validation은 그걸 줄여서 모델 성능을 더 안정적이고 공정하게 평가해줘.
+
+K-fold cross-validation
+데이터를 K등분 → 한 fold는 validation, 나머지는 train → K번 반복.
+(예: 5-fold CV → 데이터 5등분 → 5번 학습·검증 → 평균 성능 계산)
+
+Leave-One-Out CV (LOOCV)
+데이터 개수가 n이면 fold = n → 즉, 한 번에 하나의 샘플만 validation으로, 나머지는 train으로 사용.
+→ 데이터가 적을 때 자주 씀.
+
+Stratified K-fold CV
+분류 문제에서 클래스 비율이 유지되도록 fold를 나누는 방식.
+(예: 불균형 데이터셋에서 클래스 분포를 유지하면서 나눔)
